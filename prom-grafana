@@ -1,0 +1,61 @@
+sudo apt-get install postfix
+sudo nano /etc/postfix/main.cf
+relayhost = [smtp.gmail.com]:587
+smtp_use_tls = yes
+smtp_sasl_auth_enable = yes
+smtp_sasl_security_options =
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+sudo nano /etc/postfix/sasl_passwd
+[smtp.gmail.com]:587    <your-email>:<your-password>
+sudo chmod 600 /etc/postfix/sasl_passwd
+sudo postmap /etc/postfix/sasl_passwd
+sudo systemctl restart postfix
+sudo nano /etc/prometheus/prometheus.yml
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - localhost:9093
+sudo nano /etc/prometheus/alertmanager.yml
+global:
+  smtp_smarthost: 'localhost:25'
+route:
+  receiver: 'email-alerts'
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+receivers:
+- name: 'email-alerts'
+  email_configs:
+  - to: '<your-email>'
+    from: '<your-email>'
+    smarthost: 'localhost:25'
+sudo systemctl restart prometheus
+sudo systemctl restart alertmanager
+sudo apt-get install postfix
+sudo nano /etc/postfix/main.cf
+relayhost = [smtp.gmail.com]:587
+smtp_use_tls = yes
+smtp_sasl_auth_enable = yes
+smtp_sasl_security_options =
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+sudo nano /etc/postfix/sasl_passwd
+[smtp.gmail.com]:587    <your-email>:<your-password>
+sudo chmod 600 /etc/postfix/sasl_passwd
+sudo postmap /etc/postfix/sasl_passwd
+sudo postmap /etc/postfix/sasl_passwd
+sudo nano /etc/grafana/grafana.ini
+[smtp]
+enabled = true
+host = localhost:25
+user = <your-email>
+password = <your-password>
+;cert_file =
+;key_file =
+;skip_verify = false
+from_address = <your-email>
+from_name = Grafana
+sudo systemctl restart grafana-server
