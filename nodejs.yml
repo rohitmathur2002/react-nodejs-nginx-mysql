@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs
+  template:
+    metadata:
+      labels:
+        app: nodejs
+    spec:
+      containers:
+        - name: nodejs
+          image: your_nodejs_image
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MYSQL_HOST
+              value: mysql-service
+            - name: MYSQL_USER
+              value: your_mysql_user
+            - name: MYSQL_PASSWORD
+              value: your_mysql_password
+      volumes:
+        - name: nodejs-persistent-storage
+          persistentVolumeClaim:
+            claimName: nodejs-pvc
