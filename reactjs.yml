@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reactjs-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reactjs
+  template:
+    metadata:
+      labels:
+        app: reactjs
+    spec:
+      containers:
+        - name: reactjs
+          image: your_reactjs_image
+          ports:
+            - containerPort: 80
